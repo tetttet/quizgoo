@@ -1,5 +1,7 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import variant1 from "@/data/variants/1.json";
+import variant2 from "@/data/variants/2.json";
+import variant3 from "@/data/variants/3.json";
+import variant4 from "@/data/variants/4.json";
 import { QUIZ_VARIANT_IDS, type QuizQuestion, type QuizVariant, type QuizVariantId } from "@/types/quiz";
 
 type RawQuestion = {
@@ -7,6 +9,13 @@ type RawQuestion = {
   options?: unknown;
   correct_answer?: unknown;
 };
+
+const RAW_VARIANTS = {
+  "1": variant1,
+  "2": variant2,
+  "3": variant3,
+  "4": variant4,
+} satisfies Record<QuizVariantId, unknown>;
 
 export function getQuizVariants(): QuizVariant[] {
   return QUIZ_VARIANT_IDS.map((id) => {
@@ -21,9 +30,7 @@ export function getQuizVariants(): QuizVariant[] {
 }
 
 function readVariantFile(id: QuizVariantId): RawQuestion[] {
-  const filePath = path.join(process.cwd(), "..", `${id}.json`);
-  const fileContent = readFileSync(filePath, "utf8");
-  const parsed = JSON.parse(fileContent);
+  const parsed = RAW_VARIANTS[id];
 
   if (!Array.isArray(parsed)) {
     throw new Error(`${id}.json должен быть массивом вопросов`);
